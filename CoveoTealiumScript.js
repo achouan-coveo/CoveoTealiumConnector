@@ -72,7 +72,8 @@ try {
           "transaction_id" : "",
           "transaction_revenue" : "",
           "transaction_shipping" : "",
-          "transaction_tax" : ""
+          "transaction_tax" : "",
+          "currency": ''
         };
 
 
@@ -107,7 +108,7 @@ try {
             };
             window['coveoua'].t = Date.now();
             window.coveoua('init', u.data.coveo_api_key);
-            window.coveoua('set', 'currencyCode', 'CAD'); //replace CAD value by one provided by Tealium
+            window.coveoua('set', 'currencyCode', u.data.currency);
           }
           u.initialized = true;
 
@@ -121,15 +122,16 @@ try {
           var coveo_ec_event_type = coveo_ec_event_types[tealium_event];
 
           if (coveo_ec_event_type) {
-              for (let i = 0; i < b.product_id.length; ++i) {
+              for (let i = 0; i < u.data.product_id.length; ++i) {
                   window.coveoua('ec:addProduct', {
-                  'id': b.product_id[i],
-                  'name': b.product_name[i],
-                  'brand': b.product_brand[i],
-                  'category': b.product_category[i],
-                  'price': b.product_price[i],
-                  'variant': b.product_variant[i],
-                  'quantity': b.product_quantity[i],
+                  'id': u.data.product_id[i],
+                  'name': u.data.product_name[i],
+                  'brand': u.data.product_brand[i],
+                  'category': u.data.product_category[i],
+                  'price': u.data.product_price[i],
+                  'variant': u.data.product_variant[i],
+                  'quantity': u.data.product_quantity[i],
+                  'position': u.data.position[i]
                   });
               }
               if (coveo_ec_event_type == 'purchase') {
