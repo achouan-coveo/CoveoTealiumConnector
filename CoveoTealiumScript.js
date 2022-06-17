@@ -72,8 +72,10 @@ try {
           "transaction_id" : "",
           "transaction_revenue" : "",
           "transaction_shipping" : "",
-          "transaction_tax" : ""
+          "transaction_tax" : "",
+          "currency": ''
         };
+        
 
 
         /* Start Tag-Scoped Extensions Code */
@@ -107,50 +109,92 @@ try {
             };
             window['coveoua'].t = Date.now();
             window.coveoua('init', u.data.coveo_api_key);
-            window.coveoua('set', 'currencyCode', 'CAD'); //replace CAD value by one provided by Tealium
+            window.coveoua('set', 'currencyCode', u.data.currency); //replace CAD value by one provided by Tealium
           }
           u.initialized = true;
 
-          var tealium_event = u.data.tealium_event;
-          var coveo_ec_event_types = {
-              purchase: 'purchase',
-              cart_add: 'add',
-              cart_remove: 'remove',
-              product_view: 'detail',
-          };
-          var coveo_ec_event_type = coveo_ec_event_types[tealium_event];
-
-          if (coveo_ec_event_type) {
-              for (let i = 0; i < b.product_id.length; ++i) {
-                  window.coveoua('ec:addProduct', {
-                  'id': b.product_id[i],
-                  'name': b.product_name[i],
-                  'brand': b.product_brand[i],
-                  'category': b.product_category[i],
-                  'price': b.product_price[i],
-                  'variant': b.product_variant[i],
-                  'quantity': b.product_quantity[i],
-                  });
-              }
-              if (coveo_ec_event_type == 'purchase') {
-                  window.coveoua('ec:setAction', 'purchase', {
-                  'id': u.data.transaction_id,
-                  'affiliation': u.data.transaction_affiliation,
-                  'revenue': u.data.transaction_revenue,
-                  'tax': u.data.transaction_tax,
-                  'shipping': u.data.transaction_shipping
-                  });
-              } else {
-                  window.coveoua('ec:setAction', coveo_ec_event_type);
-              }
-              window.coveoua('send', (a == 'view' ? 'pageview' : 'event'), {
-                  'context_website': u.data.coveo_website,
-              });
-          } else if (a === 'view') {
-              window.coveoua('send', 'pageview', {
-                  'context_website': u.data.coveo_website,
-              });
+          if (a === 'view') {
+            window.coveoua('send', 'pageview');
           }
+
+          // Purchase
+          if (u.data.tealium_event === 'purchase') {
+              for(let i = 0; i < u.data.product_id.length; ++i){
+                let products = {};
+                products.id = u.data.product_id[i];
+                products.name = u.data.product_name[i];
+                products.brand = u.data.product_brand[i];
+                products.category =  u.data.product_category[i];
+                products.price = u.data.product_price[i];
+                products.variant = u.data.product_variant[i];
+                products.quantity =  u.data.product_quantity[i];
+                window.coveoua('ec:addProduct', 
+                products
+              );
+              }
+            window.coveoua('ec:setAction', 'purchase', {
+              'id': u.data.transaction_id,
+              'affiliation': u.data.transaction_affiliation,
+              'revenue': u.data.transaction_revenue,
+              'tax': u.data.transaction_tax,
+              'shipping': u.data.transaction_shipping
+            });
+            window.coveoua('send', 'event', {
+              'context_website': u.data.coveo_website
+            });
+          }
+          
+          // Cart Add
+          if (u.data.tealium_event === 'cart_add') {
+              window.coveoua('ec:addProduct', {
+                'id': u.data.product_id,
+                'name': u.data.product_name,
+                'brand': u.data.product_brand,
+                'category': u.data.product_category,
+                'price': u.data.product_price,
+                'variant': u.data.product_variant,
+                'quantity': u.data.product_quantity
+              });
+            window.coveoua('ec:setAction', 'add');
+            window.coveoua('send', 'event', {
+              'context_website': u.data.coveo_website
+            });
+          };
+
+          // Cart Remove
+          if (u.data.tealium_event === 'cart_remove') {
+              window.coveoua('ec:addProduct', {
+                'id': u.data.product_id,
+                'name': u.data.product_name,
+                'brand': u.data.product_brand,
+                'category': u.data.product_category,
+                'price': u.data.product_price,
+                'variant': u.data.product_variant,
+                'quantity': u.data.product_quantity
+              });
+            window.coveoua('ec:setAction', 'remove');
+            window.coveoua('send', 'event', {
+              'context_website': u.data.coveo_website
+            });
+          }
+
+          // Detail View
+          if (u.data.tealium_event === 'product_view') {
+           window.coveoua('ec:addProduct', {
+                'id': u.data.product_id,
+                'name': u.data.product_name,
+                'brand': u.data.product_brand,
+                'category': u.data.product_category,
+                'price': u.data.product_price,
+                'variant': u.data.product_variant,
+                'quantity': u.data.product_quantity
+              });
+            window.coveoua('ec:setAction', 'detail');
+            window.coveoua('send', 'event', {
+              'context_website': u.data.coveo_website
+            });
+          }
+
           /* End Loader Callback Tag Sending Code */
         };
 
