@@ -112,6 +112,10 @@ try {
           }
           u.initialized = true;
 
+          function castTo(t, v) {
+            return v === null || v === undefined ? v : t(v);
+          }
+          
           var tealium_event = u.data.tealium_event;
           var coveo_ec_event_types = {
               purchase: 'purchase',
@@ -124,23 +128,23 @@ try {
           if (coveo_ec_event_type) {
               for (let i = 0; i < u.data.product_id.length; ++i) {
                   window.coveoua('ec:addProduct', {
-                  'id': u.data.product_id[i],
-                  'name': u.data.product_name[i],
-                  'brand': u.data.product_brand[i],
-                  'category': u.data.product_category[i],
-                  'price': u.data.product_price[i],
-                  'variant': u.data.product_variant[i],
-                  'quantity': u.data.product_quantity[i],
-                  'position': u.data.position[i]
+                  'id': castTo(String, u.data.product_id[i]),
+                  'name': castTo(String, u.data.product_name[i]),
+                  'brand': castTo(String, u.data.product_brand[i]),
+                  'category': castTo(String, u.data.product_category[i]),
+                  'price': castTo(Number, u.data.product_price[i]),
+                  'variant': castTo(String, u.data.product_variant[i]),
+                  'quantity': castTo(Number, u.data.product_quantity[i]),
+                  'position': castTo(Number, u.data.position[i])
                   });
               }
               if (coveo_ec_event_type == 'purchase') {
                   window.coveoua('ec:setAction', 'purchase', {
-                  'id': u.data.transaction_id,
-                  'affiliation': u.data.transaction_affiliation,
-                  'revenue': u.data.transaction_revenue,
-                  'tax': u.data.transaction_tax,
-                  'shipping': u.data.transaction_shipping
+                  'id': castTo(String, u.data.transaction_id),
+                  'affiliation': castTo(String, u.data.transaction_affiliation),
+                  'revenue': castTo(Number, u.data.transaction_revenue),
+                  'tax': castTo(Number, u.data.transaction_tax),
+                  'shipping': castTo(Number,u.data.transaction_shipping)
                   });
               } else {
                   window.coveoua('ec:setAction', coveo_ec_event_type);
