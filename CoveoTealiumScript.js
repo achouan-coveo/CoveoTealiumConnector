@@ -147,14 +147,12 @@ try {
                   'tax': castTo(Number, u.data.transaction_tax),
                   'shipping': castTo(Number,u.data.transaction_shipping)
                   });
+              } else if(!!u.data.coveosearchuid){
+                window.coveoua('ec:setAction', coveo_ec_event_type, {
+                  'list': `'coveo:search:${u.data.coveosearchuid}'`
+                });
               } else {
-                  if(!!u.data.coveosearchuid){
-                    window.coveoua('ec:setAction', coveo_ec_event_type);
-                  }else{
-                    window.coveoua('ec:setAction', coveo_ec_event_type, {
-                      'list': `'coveo:search:${u.data.coveosearchuid}'`
-                    });
-                  }
+                window.coveoua('ec:setAction', coveo_ec_event_type);
               }
               window.coveoua('send', (a == 'view' ? 'pageview' : 'event'), {
                   'context_website': u.data.coveo_website,
