@@ -148,7 +148,13 @@ try {
                   'shipping': castTo(Number,u.data.transaction_shipping)
                   });
               } else {
-                  window.coveoua('ec:setAction', coveo_ec_event_type);
+                  if(!!u.data.coveosearchuid){
+                    window.coveoua('ec:setAction', coveo_ec_event_type);
+                  }else{
+                    window.coveoua('ec:setAction', coveo_ec_event_type, {
+                      'list': `'coveo:search:${u.data.coveosearchuid}'`
+                    });
+                  }
               }
               window.coveoua('send', (a == 'view' ? 'pageview' : 'event'), {
                   'context_website': u.data.coveo_website,
