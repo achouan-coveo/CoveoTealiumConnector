@@ -53,6 +53,7 @@ try {
           "base_url" : "//static.cloud.coveo.com/coveo.analytics.js/2/coveoua.js",
           "coveo_api_key" : "",
           "coveo_website": document.location.hostname,
+          "coveo_searchuid": "",
           "position" : "",
           "product_brand" : "",
           "product_category" : "",
