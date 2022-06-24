@@ -148,8 +148,8 @@ try {
                   'tax': castTo(Number, u.data.transaction_tax),
                   'shipping': castTo(Number,u.data.transaction_shipping)
                   });
-              } else if(!!u.data.coveosearchuid || !!utag_data.coveosearchuid){
-                let id = !!u.data.coveosearchuid ? u.data.coveosearchuid : utag_data.coveosearchuid;
+              } else if(!!u.data.coveo_searchuid || !!utag_data.coveosearchuid){
+                let id = !!u.data.coveo_searchuid ? u.data.coveo_searchuid : utag_data.coveosearchuid;
                 window.coveoua('ec:setAction', coveo_ec_event_type, {
                   'list': `'coveo:search:${id}'`
                 });
