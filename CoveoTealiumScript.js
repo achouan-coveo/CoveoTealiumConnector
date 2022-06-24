@@ -125,6 +125,7 @@ try {
               product_view: 'detail',
           };
           var coveo_ec_event_type = coveo_ec_event_types[tealium_event];
+          var utag_data = utag_data || {};
 
           if (coveo_ec_event_type) {
               for (let i = 0; i < u.data.product_id.length; ++i) {
@@ -147,9 +148,10 @@ try {
                   'tax': castTo(Number, u.data.transaction_tax),
                   'shipping': castTo(Number,u.data.transaction_shipping)
                   });
-              } else if(!!u.data.coveosearchuid){
+              } else if(!!u.data.coveosearchuid || !!utag_data.coveosearchuid){
+                let id = !!u.data.coveosearchuid ? u.data.coveosearchuid : utag_data.coveosearchuid;
                 window.coveoua('ec:setAction', coveo_ec_event_type, {
-                  'list': `'coveo:search:${u.data.coveosearchuid}'`
+                  'list': `'coveo:search:${id}'`
                 });
               } else {
                 window.coveoua('ec:setAction', coveo_ec_event_type);
